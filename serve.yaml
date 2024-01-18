@@ -1,0 +1,40 @@
+model:
+  name: my-model
+  version: v1
+
+input:
+  format: JSON
+  schema: input_schema.json
+
+output:
+  format: JSON
+  schema: output_schema.json
+
+deployment:
+  host: localhost
+  port: 8080
+  concurrency: 4
+  autoscaling:
+    enabled: true
+    min_instances: 1
+    max_instances: 10
+
+environment:
+  API_KEY: my-secret-key
+
+routes:
+  - endpoint: /predict
+    method: POST
+    function: predict
+
+auth:
+  method: API_KEY
+  required: true
+
+logging:
+  level: INFO
+  file: /var/log/model.log
+
+health_check:
+  endpoint: /health
+
