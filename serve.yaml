@@ -6,4 +6,5 @@ server:
 routes:
   - path: /api
     target: http://localhost:5000 # Address where your Python REST API is hosted
-    rewrite_path: true
+    rewrite_path: false
+    
