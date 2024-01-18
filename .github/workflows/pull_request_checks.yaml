@@ -1,0 +1,40 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint YAML Files
+        run: yamllint serve.yaml
+
+      - name: Validate Schema
+        run: pykwalify -f schema.yaml -d serve.yaml
+
+      - name: Check Naming Conventions
+        run: |
+          # Check that all file names consist only of lowercase letters (a-z)
+          for file in *; do
+            if [[ ! "$file" =~ ^[a-z]+$ ]]; then
+              echo "File name '$file' does not follow naming conventions (lowercase letters only)."
+              exit 1  # Exit with a non-zero status code to indicate failure
+            fi
+          done
+
+          echo "All files follow the naming conventions."
