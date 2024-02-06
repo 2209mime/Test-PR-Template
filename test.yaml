@@ -1,0 +1,35 @@
+apiVersion: ai.sap.com/v1alpha1
+kind: ServingTemplate
+metadata:
+  name: sample-serving-executable
+annotations:
+  scenarios.ai.sap.com/description: "Sample AI Core serving scenario"
+  scenarios.ai.sap.com/name: "sample-serving-scenario"
+  executables.ai.sap.com/description: "Sample AI Core serving executable"
+  executables.ai.sap.com/name: "sample-serving-executable"
+labels:
+  scenarios.ai.sap.com/id: "sample-serving-scenario"
+  executables.ai.sap.com/id: "sample-serving-executable"
+  ai.sap.com/version: "1.0.0"
+spec:
+  template:
+    apiVersion: "serving.kubeflow.org/v1beta1"
+    metadata:
+      annotations:
+        autoscaling.knative.dev/metric: concurrency
+        autoscaling.knative.dev/target: "1"
+        autoscaling.knative.dev/targetBurstCapacity: "0"
+      labels:
+        ai.sap.com/resourcePlan: starter
+    spec:
+      predictor:
+        imagePullSecrets:
+          - name: sampleservingdockerimage
+        minReplicas: 1
+        maxReplicas: 5
+        containers:
+          - name: kfserving-container
+            image: "ies-aicoe.common.repositories.cloud.sap/aifpoc/sample-serve:01"
+            ports:
+              - containerPort: 9001
+                protocol: TCP
