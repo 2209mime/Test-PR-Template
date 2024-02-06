@@ -1,0 +1,56 @@
+# Ensure that this matches the schema version defined in your schema.yaml
+apiVersion: ai.sap.com/v1alpha1
+
+# Specify the resource type based on your schema
+kind: ServingTemplate
+
+metadata:
+  name: sample-serving-executable
+
+  # Annotations conforming to specific schema annotations
+  annotations:
+    scenarios.ai.sap.com/description: "Sample AI Core serving scenario"
+    scenarios.ai.sap.com/name: "sample-serving-scenario"
+    executables.ai.sap.com/description: "Sample AI Core serving executable"
+    executables.ai.sap.com/name: "sample-serving-executable"
+
+  labels:
+    # Label definitions matching your schema
+    scenarios.ai.sap.com/id: "sample-serving-scenario"
+    executables.ai.sap.com/id: "sample-serving-executable"
+    ai.sap.com/version: "1.0.0"
+
+spec:
+  template:
+    # Ensure that this API version aligns with your schema
+    apiVersion: "serving.kubeflow.org/v1beta1"
+    
+    metadata:
+      # Annotations conforming to specific schema annotations
+      annotations: |
+        autoscaling.knative.dev/metric: concurrency
+        autoscaling.knative.dev/target: 1
+        autoscaling.knative.dev/targetBurstCapacity: 0
+      
+      # Labels conforming to specific schema labels
+      labels: |
+        ai.sap.com/resourcePlan: starter  # computing power
+
+    spec: |
+      # Specifications that align with your schema
+      predictor:
+        imagePullSecrets:
+          - name: sampleservingdockerimage
+        
+        # Ensure that minReplicas, maxReplicas, and containers align with your schema
+        minReplicas: 1
+        maxReplicas: 5
+        containers:
+          - name: kfserving-container
+            image: "ies-aicoe.common.repositories.cloud.sap/aifpoc/sample-serve:01"
+            
+            # Ensure that container ports and protocols align with your schema
+            ports:
+              - containerPort: 9001
+                protocol: TCP
+
