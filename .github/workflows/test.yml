@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  lint-and-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.x'
+      
+    - name: Install pykwalify
+      run: pip install pykwalify
+      
+    - name: Install yamllint
+      run: pip install yamllint
+      
+    - name: Lint YAML Files
+      run: yamllint .
+
+    - name: Validate serve.yaml against the schema
+      run: pykwalify -f schema.yaml -d serve.yaml
+
+    # Add other steps if necessary
