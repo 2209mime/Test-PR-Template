@@ -1,37 +1,76 @@
-name: Pull Request Checks
-
-on:
-  pull_request:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Lint YAML Files
-        run: yamllint serve.yaml
-
-      - name: Validate Schema
-        run: pykwalify -f schema.yaml -d serve.yaml
-
-      - name: Check Naming Conventions
-        run: |
-          for file in *; do
-            if [[ ! "$file" =~ ^[a-z]+$ ]]; then
-              echo "File name '$file' does not follow naming conventions (lowercase letters only)."
-              exit 1
-            fi
-          done
+type: map
+mapping:
+  apiVersion:
+    type: str
+    required: true
+    pattern: "^ai.sap.com/v[0-9]+alpha[0-9]+$"
+  kind:
+    type: str
+    required: true
+    enum:
+      - ServingTemplate
+  metadata:
+    type: map
+    required: true
+    mapping:
+      name:
+        type: str
+        required: true
+        pattern: "^[a-z0-9-]+$"
+      annotations:
+        type: map
+        required: true
+        mapping:
+          "scenarios.ai.sap.com/description":
+            type: str
+            required: true
+          "scenarios.ai.sap.com/name":
+            type: str
+            required: true
+          "executables.ai.sap.com/description":
+            type: str
+            required: true
+          "executables.ai.sap.com/name":
+            type: str
+            required: true
+      labels:
+        type: map
+        required: true
+        mapping:
+          "scenarios.ai.sap.com/id":
+            type: str
+            required: true
+            pattern: "^[a-z0-9-]+$"
+          "executables.ai.sap.com/id":
+            type: str
+            required: true
+            pattern: "^[a-z0-9-]+$"
+          "ai.sap.com/version":
+            type: str
+            required: true
+            pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+  spec:
+    type: map
+    required: true
+    mapping:
+      template:
+        type: map
+        required: true
+        mapping:
+          apiVersion:
+            type: str
+            required: true
+            pattern: "^serving.kubeflow.org/v[0-9]+beta[0-9]+$"
+          metadata:
+            type: map
+            required: true
+            mapping:
+              annotations:
+                type: str
+                required: true
+              labels:
+                type: str
+                required: true
+          spec:
+            type: str
+            required: true
