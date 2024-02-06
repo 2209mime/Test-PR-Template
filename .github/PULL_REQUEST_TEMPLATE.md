@@ -1,3 +1,10 @@
+## Pull Request Title
+
+[please write title of the pull request]
+
+## Pull Request Description
+
+[please provide the description and changes you have made for pull request]
 ### Pull Request Checklist
 
 - [ ] **Syntax Check:** Executed YAML linter (`yamllint serve.yaml`).
